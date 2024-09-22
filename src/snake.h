@@ -26,6 +26,7 @@ class Snake {
   bool alive{true};
   float head_x;
   float head_y;
+  SDL_Point GetHead();
   std::vector<SDL_Point> body;
 
  private:
