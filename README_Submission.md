@@ -1,9 +1,9 @@
 # Loops, Functions, I/O - meet at least 2 criteria
 | Criteria | Submission Requirements | Implementation |
 |---|---|---|
-|The project demonstrates an understanding of C++ functions and control structures.| A variety of control structures are added to the project. The project code is clearly organized into functions.|writing the highscore in main.cpp is factored out into a function.|
+|The project demonstrates an understanding of C++ functions and control structures.| A variety of control structures are added to the project. The project code is clearly organized into functions.|Writing the highscore in main.cpp is factored out into a function. Determining opposite direction is refactored into a function in controller.cpp|
 | The project reads data from a file and process the data, or the program writes data to a file.| The project reads data from an external file or writes data to a file as part of the necessary operation of the program.|in main.cpp the program writes the highscore into a file "score.txt".|
-|The project accepts user input and processes the input.| In addition to controlling the snake, the game can also receive new types of input from the player.||
+|The project accepts user input and processes the input.| In addition to controlling the snake, the game can also receive new types of input from the player.|Added a cheat mode by pressing 'c' in controller.cpp|
 |The project uses data structures and immutable variables.| The project uses arrays or vectors and uses constant variables.||
 # Object Oriented Programming - meet at least 3 criteria
 | Criteria | Submission Requirements | Implementation |
