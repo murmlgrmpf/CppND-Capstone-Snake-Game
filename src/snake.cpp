@@ -2,6 +2,13 @@
 #include <cmath>
 #include <iostream>
 
+SDL_Point Snake::GetGrid(){
+  SDL_Point cell{
+      grid_width,
+      grid_height};  // get the lower right corner = size of the grid.
+  return cell;
+}
+
 SDL_Point Snake::GetHead(){
   SDL_Point cell{
       static_cast<int>(head_x),

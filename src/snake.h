@@ -27,6 +27,7 @@ class Snake {
   float head_x;
   float head_y;
   SDL_Point GetHead();
+  SDL_Point GetGrid();
   std::vector<SDL_Point> body;
 
  private:

@@ -27,7 +27,7 @@ Snake::Direction Controller::GetOppositeDirection(Snake::Direction input) const{
   return opposite;
 }
 
-void Controller::HandleInput(bool &running, Snake &snake) const {
+void Controller::HandleInput(bool &running, Snake &snake, SDL_Point &food) const {
   SDL_Event e;
   while (SDL_PollEvent(&e)) {
     if (e.type == SDL_QUIT) {
@@ -51,8 +51,21 @@ void Controller::HandleInput(bool &running, Snake &snake) const {
           break;
         case SDLK_c:
           std::cout << "Cheat Mode enabled!"<<std::endl;
-          ChangeDirection(snake, Snake::Direction::kRight);
+          ChangeDirection(snake, ComputeDirection(snake, food));
       }
     }
+  }
+}
+
+Snake::Direction Controller::ComputeDirection(Snake &snake, SDL_Point &food) const{
+  SDL_Point head = snake.GetHead();
+  SDL_Point grid = snake.GetGrid();
+  int x_diff = (food.x -head.x ) %grid.x;
+  int y_diff = (food.y -head.y ) %grid.y;
+  if (abs(x_diff)>abs(y_diff)){
+    return (x_diff>0 && x_diff<grid.x/2)? Snake::Direction::kRight : Snake::Direction::kLeft;
+  }
+  else{
+    return (y_diff>0 && y_diff<grid.y/2)? Snake::Direction::kDown : Snake::Direction::kUp;
   }
 }
