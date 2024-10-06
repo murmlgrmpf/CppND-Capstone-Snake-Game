@@ -16,6 +16,13 @@ SDL_Point Snake::GetHead(){
   return cell;
 }
 
+void Snake::Setup(int grid_width, int grid_height){
+    this->grid_width = grid_width;
+    this->grid_height = grid_height;
+    this->head_x = grid_width / 2;
+    this->head_y = grid_height / 2;
+}
+
 void Snake::Update() {
   SDL_Point prev_cell = GetHead();  // We first capture the head's cell before updating.
   UpdateHead();

@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <random>
+#include <memory>
 #include "SDL.h"
 #include "controller.h"
 #include "renderer.h"
@@ -9,15 +10,18 @@
 
 class Game {
  public:
-  Game(std::size_t grid_width, std::size_t grid_height);
+  Game(std::size_t grid_width, std::size_t grid_height, std::shared_ptr<SDL_Point> food_= std::make_shared<SDL_Point>(),
+  std::shared_ptr<Snake> snake_ = std::make_shared<Snake>());
   void Run(Controller const &controller, Renderer &renderer,
            std::size_t target_frame_duration);
   int GetScore() const;
   int GetSize() const;
 
+  Controller controller;
+
  private:
-  Snake snake;
-  SDL_Point food;
+  std::shared_ptr<Snake> snake;
+  std::shared_ptr<SDL_Point> food;
 
   std::random_device dev;
   std::mt19937 engine;
