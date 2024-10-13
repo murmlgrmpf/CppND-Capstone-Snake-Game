@@ -1,6 +1,7 @@
 #include "game.h"
 #include <iostream>
 #include "SDL.h"
+#include <future>
 
 Game::Game(std::size_t grid_width, std::size_t grid_height, std::shared_ptr<Food> food_, std::shared_ptr<Snake> snake_)
     : snake(snake_),
@@ -28,9 +29,9 @@ void Game::Run(Controller const &controller, Renderer &renderer,
 
     // Input, Update, Render - the main game loop.
     controller.HandleInput(running);
-    Update();
-    renderer.Render(snake, food);
-
+    auto upd_future = std::async(std::launch::async, &Game::Update,this);
+    renderer.Render(snake,food);    
+    
     frame_end = SDL_GetTicks();
 
     // Keep track of how long each loop through the input/update/render cycle
@@ -51,6 +52,7 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     if (frame_duration < target_frame_duration) {
       SDL_Delay(target_frame_duration - frame_duration);
     }
+    upd_future.get();
   }
 }
 
