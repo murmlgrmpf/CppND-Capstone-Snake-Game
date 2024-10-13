@@ -62,6 +62,7 @@ void Game::PlaceFood() {
     // Check that the location is not occupied by a snake item before placing
     // food.
     if (!snake->SnakeCell(x, y)) {
+      std::unique_lock<std::mutex> lck(fmtx);
       food->x = x;
       food->y = y;
       return;
@@ -70,22 +71,25 @@ void Game::PlaceFood() {
 }
 
 void Game::Update() {
-  if (!snake->alive) return;
-
+  if (!snake->isAlive()) return;
+  std::unique_lock<std::mutex> lck(fmtx);
   snake->Update();
-
-  int new_x = static_cast<int>(snake->head_x);
-  int new_y = static_cast<int>(snake->head_y);
+  lck.unlock();
+  SDL_Point head = snake->GetHead();
+  int new_x = static_cast<int>(head.x);
+  int new_y = static_cast<int>(head.y);
 
   // Check if there's food over here
   if (food->x == new_x && food->y == new_y) {
     score++;
     PlaceFood();
     // Grow snake and increase speed.
+    lck.lock();
     snake->GrowBody();
-    snake->speed += 0.02;
+    snake->incrementSpeed(0.02);
+    lck.unlock();
   }
 }
 
 int Game::GetScore() const { return score; }
-int Game::GetSize() const { return snake->size; }
+int Game::GetSize() const { return snake->getSize(); }

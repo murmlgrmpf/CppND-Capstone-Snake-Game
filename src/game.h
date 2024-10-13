@@ -3,6 +3,7 @@
 
 #include <random>
 #include <memory>
+#include <mutex>
 #include "SDL.h"
 #include "controller.h"
 #include "renderer.h"
@@ -18,6 +19,7 @@ class Game {
   int GetSize() const;
 
   Controller controller;
+  std::mutex fmtx;
 
  private:
   std::shared_ptr<Snake> snake;

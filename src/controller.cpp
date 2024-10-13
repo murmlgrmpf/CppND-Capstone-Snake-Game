@@ -4,7 +4,7 @@
 #include "base.h"
 
 void Controller::ChangeDirection(Snake::Direction input) const {
-  if (_snake->direction != GetOppositeDirection(input) || _snake->size == 1) _snake->direction = input;
+  if (_snake->getDirection() != GetOppositeDirection(input) || _snake->getSize() == 1) _snake->setDirection(input);
   return;
 }
 
@@ -73,6 +73,7 @@ void Controller::HandleInput(bool &running) const
 }
 
 Snake::Direction Controller::ComputeDirection() const{
+
   SDL_Point head = _snake->GetHead();
   SDL_Point grid = _snake->GetGrid();
   int x_diff = (_food->x -head.x ) %grid.x;

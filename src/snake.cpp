@@ -3,6 +3,7 @@
 #include <iostream>
 
 SDL_Point Snake::GetGrid(){
+  std::lock_guard<std::mutex> lck(smtx);
   SDL_Point cell{
       grid_width,
       grid_height};  // get the lower right corner = size of the grid.
@@ -10,6 +11,7 @@ SDL_Point Snake::GetGrid(){
 }
 
 SDL_Point Snake::GetHead(){
+  std::lock_guard<std::mutex> lck(smtx);
   SDL_Point cell{
       static_cast<int>(head_x),
       static_cast<int>(head_y)};  // Capture the head's cell.
@@ -17,6 +19,7 @@ SDL_Point Snake::GetHead(){
 }
 
 void Snake::Setup(int grid_width, int grid_height){
+    std::lock_guard<std::mutex> lck(smtx);
     this->grid_width = grid_width;
     this->grid_height = grid_height;
     this->head_x = grid_width / 2;
@@ -36,6 +39,7 @@ void Snake::Update() {
 }
 
 void Snake::UpdateHead() {
+  std::lock_guard<std::mutex> lck(smtx);
   switch (direction) {
     case Direction::kUp:
       head_y -= speed;
@@ -60,6 +64,7 @@ void Snake::UpdateHead() {
 }
 
 void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) {
+  std::lock_guard<std::mutex> lck(smtx);
   // Add previous head location to vector
   body.push_back(prev_head_cell);
 
@@ -79,10 +84,14 @@ void Snake::UpdateBody(SDL_Point &current_head_cell, SDL_Point &prev_head_cell) 
   }
 }
 
-void Snake::GrowBody() { growing = true; }
+void Snake::GrowBody() {
+  std::lock_guard<std::mutex> lck(smtx);
+  growing = true;
+}
 
 // Inefficient method to check if cell is occupied by snake.
 bool Snake::SnakeCell(int x, int y) {
+  std::lock_guard<std::mutex> lck(smtx);
   if (x == static_cast<int>(head_x) && y == static_cast<int>(head_y)) {
     return true;
   }
