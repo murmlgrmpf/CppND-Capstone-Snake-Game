@@ -2,7 +2,7 @@
 #include <iostream>
 #include "SDL.h"
 
-Game::Game(std::size_t grid_width, std::size_t grid_height, std::shared_ptr<SDL_Point> food_, std::shared_ptr<Snake> snake_)
+Game::Game(std::size_t grid_width, std::size_t grid_height, std::shared_ptr<Food> food_, std::shared_ptr<Snake> snake_)
     : snake(snake_),
       food(food_),
       engine(dev()),
@@ -62,9 +62,7 @@ void Game::PlaceFood() {
     // Check that the location is not occupied by a snake item before placing
     // food.
     if (!snake->SnakeCell(x, y)) {
-      std::unique_lock<std::mutex> lck(fmtx);
-      food->x = x;
-      food->y = y;
+      food->setFood(x,y);
       return;
     }
   }
@@ -72,22 +70,19 @@ void Game::PlaceFood() {
 
 void Game::Update() {
   if (!snake->isAlive()) return;
-  std::unique_lock<std::mutex> lck(fmtx);
   snake->Update();
-  lck.unlock();
   SDL_Point head = snake->GetHead();
   int new_x = static_cast<int>(head.x);
   int new_y = static_cast<int>(head.y);
 
   // Check if there's food over here
-  if (food->x == new_x && food->y == new_y) {
+  SDL_Point fd = food->getFood();
+  if (fd.x == new_x && fd.y == new_y) {
     score++;
     PlaceFood();
     // Grow snake and increase speed.
-    lck.lock();
     snake->GrowBody();
     snake->incrementSpeed(0.02);
-    lck.unlock();
   }
 }
 

@@ -31,7 +31,7 @@ Snake::Direction Controller::GetOppositeDirection(Snake::Direction input) const{
   return opposite;
 }
 
-Controller::Controller(std::shared_ptr<Snake> snake, std::shared_ptr<SDL_Point> food):
+Controller::Controller(std::shared_ptr<Snake> snake, std::shared_ptr<Food> food):
   _snake(snake),
   _food(food)
 {}
@@ -76,8 +76,9 @@ Snake::Direction Controller::ComputeDirection() const{
 
   SDL_Point head = _snake->GetHead();
   SDL_Point grid = _snake->GetGrid();
-  int x_diff = (_food->x -head.x ) %grid.x;
-  int y_diff = (_food->y -head.y ) %grid.y;
+  SDL_Point food = _food->getFood();
+  int x_diff = (food.x -head.x ) %grid.x;
+  int y_diff = (food.y -head.y ) %grid.y;
   if (abs(x_diff)>abs(y_diff)){
     return (x_diff>0 && x_diff<grid.x/2)? Snake::Direction::kRight : Snake::Direction::kLeft;
   }

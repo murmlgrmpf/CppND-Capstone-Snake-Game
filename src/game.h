@@ -3,7 +3,7 @@
 
 #include <random>
 #include <memory>
-#include <mutex>
+#include "food.h"
 #include "SDL.h"
 #include "controller.h"
 #include "renderer.h"
@@ -11,7 +11,7 @@
 
 class Game {
  public:
-  Game(std::size_t grid_width, std::size_t grid_height, std::shared_ptr<SDL_Point> food_= std::make_shared<SDL_Point>(),
+  Game(std::size_t grid_width, std::size_t grid_height, std::shared_ptr<Food> food_= std::make_shared<Food>(),
   std::shared_ptr<Snake> snake_ = std::make_shared<Snake>());
   void Run(Controller const &controller, Renderer &renderer,
            std::size_t target_frame_duration);
@@ -19,11 +19,10 @@ class Game {
   int GetSize() const;
 
   Controller controller;
-  std::mutex fmtx;
 
  private:
   std::shared_ptr<Snake> snake;
-  std::shared_ptr<SDL_Point> food;
+  std::shared_ptr<Food> food;
 
   std::random_device dev;
   std::mt19937 engine;

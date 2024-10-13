@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include "food.h"
 #include "SDL.h"
 #include "snake.h"
 
@@ -12,7 +13,7 @@ class Renderer {
            const std::size_t grid_width, const std::size_t grid_height);
   ~Renderer();
 
-  void Render(std::shared_ptr<Snake> const snake, std::shared_ptr<SDL_Point> food);
+  void Render(std::shared_ptr<Snake> const snake, std::shared_ptr<Food> food);
   void UpdateWindowTitle(int score, int fps);
 
  private:
