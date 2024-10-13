@@ -5,24 +5,30 @@
 
 class Food {
  public:
-    Food(){};
+    Food(){
+        food = new SDL_Point;
+    };
+    ~Food(){
+        delete food;
+    };
     SDL_Point getFood(){
         std::lock_guard<std::mutex> lck(mtx);
-        return food;
+        return *food;
     };
     void setFood(SDL_Point f){
         std::lock_guard<std::mutex> lck(mtx);
-        food= f;
+        food->x = f.x;
+        food->y = f.y;
     }
     void setFood(int x, int y){
         std::lock_guard<std::mutex> lck(mtx);
-        food.x = x;
-        food.y = y;
+        food->x = x;
+        food->y = y;
     }
 
 
  private:
-    SDL_Point food;
+    SDL_Point *food;
     std::mutex mtx;
 };
 
