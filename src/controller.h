@@ -3,13 +3,11 @@
 #include <memory>
 #include "food.h"
 #include "snake.h"
-#include "base.h"
 
-class Controller: public Base {
+class Controller {
  public:
     Controller(std::shared_ptr<Snake> snake);
     Food && HandleInput(bool &running, Food &&fd) const;
-    void start();
 
  private:
     void ChangeDirection(Snake::Direction input) const;

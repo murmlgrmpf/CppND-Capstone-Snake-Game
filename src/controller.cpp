@@ -1,15 +1,10 @@
 #include "controller.h"
 #include <iostream>
 #include "snake.h"
-#include "base.h"
 
 void Controller::ChangeDirection(Snake::Direction input) const {
   if (_snake->getDirection() != GetOppositeDirection(input) || _snake->getSize() == 1) _snake->setDirection(input);
   return;
-}
-
-void Controller::start(){
-
 }
 
 Snake::Direction Controller::GetOppositeDirection(Snake::Direction input) const{
