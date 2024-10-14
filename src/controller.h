@@ -7,16 +7,15 @@
 
 class Controller: public Base {
  public:
-    Controller(std::shared_ptr<Snake> snake, std::shared_ptr<Food>food);
-    void HandleInput(bool &running) const;
+    Controller(std::shared_ptr<Snake> snake);
+    Food && HandleInput(bool &running, Food &&fd) const;
     void start();
 
  private:
     void ChangeDirection(Snake::Direction input) const;
     Snake::Direction GetOppositeDirection(Snake::Direction input) const;
-    Snake::Direction ComputeDirection() const;
+    Snake::Direction ComputeDirection(int food_x, int food_y) const;
 
-    std::shared_ptr<Food> _food;
     std::shared_ptr<Snake> _snake;
 };
 

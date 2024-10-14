@@ -11,7 +11,7 @@
 
 class Game {
  public:
-  Game(std::size_t grid_width, std::size_t grid_height, std::shared_ptr<Food> food_= std::make_shared<Food>(),
+  Game(std::size_t grid_width, std::size_t grid_height,
   std::shared_ptr<Snake> snake_ = std::make_shared<Snake>());
   void Run(Controller const &controller, Renderer &renderer,
            std::size_t target_frame_duration);
@@ -22,7 +22,6 @@ class Game {
 
  private:
   std::shared_ptr<Snake> snake;
-  std::shared_ptr<Food> food;
 
   std::random_device dev;
   std::mt19937 engine;
@@ -31,8 +30,8 @@ class Game {
 
   int score{0};
 
-  void PlaceFood();
-  void Update();
+  Food &&PlaceFood(Food &&food);
+  Food Update(Food food);
 };
 
 #endif

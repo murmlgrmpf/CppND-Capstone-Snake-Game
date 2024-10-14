@@ -31,12 +31,10 @@ Snake::Direction Controller::GetOppositeDirection(Snake::Direction input) const{
   return opposite;
 }
 
-Controller::Controller(std::shared_ptr<Snake> snake, std::shared_ptr<Food> food):
-  _snake(snake),
-  _food(food)
-{}
+Controller::Controller(std::shared_ptr<Snake> snake):_snake(snake){
+}
 
-void Controller::HandleInput(bool &running) const
+Food && Controller::HandleInput(bool &running, Food &&fd) const
 {
     SDL_Event e;
     while (SDL_PollEvent(&e))
@@ -66,19 +64,19 @@ void Controller::HandleInput(bool &running) const
                 break;
             case SDLK_c:
                 std::cout << "Cheat Mode enabled!" << std::endl;
-                ChangeDirection(ComputeDirection());
+                ChangeDirection(ComputeDirection(fd.x(),fd.y()));
             }
         }
     }
+    return std::move(fd);
 }
 
-Snake::Direction Controller::ComputeDirection() const{
+Snake::Direction Controller::ComputeDirection(int food_x,int food_y) const{
 
   SDL_Point head = _snake->GetHead();
   SDL_Point grid = _snake->GetGrid();
-  SDL_Point food = _food->getFood();
-  int x_diff = (food.x -head.x ) %grid.x;
-  int y_diff = (food.y -head.y ) %grid.y;
+  int x_diff = (food_x -head.x ) %grid.x;
+  int y_diff = (food_y -head.y ) %grid.y;
   if (abs(x_diff)>abs(y_diff)){
     return (x_diff>0 && x_diff<grid.x/2)? Snake::Direction::kRight : Snake::Direction::kLeft;
   }

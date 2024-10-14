@@ -3,15 +3,13 @@
 #include "SDL.h"
 #include <future>
 
-Game::Game(std::size_t grid_width, std::size_t grid_height, std::shared_ptr<Food> food_, std::shared_ptr<Snake> snake_)
+Game::Game(std::size_t grid_width, std::size_t grid_height, std::shared_ptr<Snake> snake_)
     : snake(snake_),
-      food(food_),
       engine(dev()),
       random_w(0, static_cast<int>(grid_width - 1)),
       random_h(0, static_cast<int>(grid_height - 1)),
-      controller(snake_, food_)
+      controller(snake_)
        {
-  PlaceFood();
   snake->Setup(grid_width,grid_height);
 }
 
@@ -23,14 +21,19 @@ void Game::Run(Controller const &controller, Renderer &renderer,
   Uint32 frame_duration;
   int frame_count = 0;
   bool running = true;
+  Food food;
+  food = PlaceFood(std::move(food));
 
   while (running) {
     frame_start = SDL_GetTicks();
 
     // Input, Update, Render - the main game loop.
-    controller.HandleInput(running);
-    auto upd_future = std::async(std::launch::async, &Game::Update,this);
-    renderer.Render(snake,food);    
+    // Async: food is call by value:
+    auto upd_future = std::async(std::launch::async, &Game::Update,this,food);
+    // Now the food is moved around:
+    food = controller.HandleInput(running, std::move(food));
+    // And rendered by call by reference (const)
+    renderer.Render(snake,food);
     
     frame_end = SDL_GetTicks();
 
@@ -52,11 +55,12 @@ void Game::Run(Controller const &controller, Renderer &renderer,
     if (frame_duration < target_frame_duration) {
       SDL_Delay(target_frame_duration - frame_duration);
     }
-    upd_future.get();
+    // new food comes back:
+    food = upd_future.get();
   }
 }
 
-void Game::PlaceFood() {
+Food &&Game::PlaceFood(Food && food) {
   int x, y;
   while (true) {
     x = random_w(engine);
@@ -64,28 +68,29 @@ void Game::PlaceFood() {
     // Check that the location is not occupied by a snake item before placing
     // food.
     if (!snake->SnakeCell(x, y)) {
-      food->setFood(x,y);
-      return;
+      food.setFood(x,y);
+      return std::move(food);
     }
   }
 }
 
-void Game::Update() {
-  if (!snake->isAlive()) return;
+Food Game::Update(Food food) {
+  if (!snake->isAlive()) return food;
   snake->Update();
   SDL_Point head = snake->GetHead();
   int new_x = static_cast<int>(head.x);
   int new_y = static_cast<int>(head.y);
 
   // Check if there's food over here
-  SDL_Point fd = food->getFood();
+  SDL_Point fd = food.getFood();
   if (fd.x == new_x && fd.y == new_y) {
     score++;
-    PlaceFood();
+    food = PlaceFood(std::move(food));
     // Grow snake and increase speed.
     snake->GrowBody();
     snake->incrementSpeed(0.02);
   }
+  return food;
 }
 
 int Game::GetScore() const { return score; }
